@@ -6,6 +6,7 @@ use glam::{Affine3A, Quat, Vec3, Vec3A, Vec4};
 use idmap::IdMap;
 use ovr_overlay::overlay::OverlayManager;
 use ovr_overlay::sys::ETrackingUniverseOrigin;
+use smallvec::SmallVec;
 use wgui::gfx::{CommandBufferUsage, Format, ImageView, WGfx};
 use wlx_common::overlays::{BackendAttrib, BackendAttribValue};
 
@@ -56,11 +57,14 @@ impl LinePool {
     pub fn allocate(&mut self) -> usize {
         let id = LINE_AUTO_INCREMENT.fetch_add(1, Ordering::Relaxed);
 
+        let mut image_views: SmallVec<[Arc<ImageView>; 2]> = SmallVec::new();
+        image_views.push(self.view.clone());
+
         let data = OverlayWindowData::<OpenVrOverlayData> {
             data: OpenVrOverlayData {
                 width: 0.002,
                 override_width: true,
-                image_view: Some(self.view.clone()),
+                image_views,
                 image_dirty: true,
                 ..Default::default()
             },

@@ -67,7 +67,7 @@ pub struct ScreenBackend {
 impl ScreenBackend {
     pub(super) fn new_raw(
         name: Arc<str>,
-        xr_backend: XrBackend,
+        _xr_backend: XrBackend,
         capture_type: CaptureType,
         capture: Box<dyn WlxCapture<WlxCaptureIn, WlxCaptureOut>>,
     ) -> Self {
@@ -80,7 +80,7 @@ impl ScreenBackend {
             meta: None,
             mouse_transform: Affine2::ZERO,
             interaction_transform: None,
-            stereo: xr_backend.is_open_xr().then_some(StereoMode::None),
+            stereo: Some(StereoMode::None),
             stereo_full_frame: false,
             stereo_adjust_mouse: false,
             logical_pos: Vec2::ZERO,
