@@ -348,11 +348,7 @@ impl WvrWindowBackend {
             mouse: None,
             cursor_revision: None,
             cursor_status: CursorImageStatus::default_named(),
-            stereo: app
-                .feats
-                .xr_backend
-                .is_open_xr()
-                .then_some(StereoMode::None),
+            stereo: Some(StereoMode::None),
             stereo_full_frame: false,
             stereo_adjust_mouse: false,
             cur_image: None,

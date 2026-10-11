@@ -10,7 +10,6 @@ use ovr_overlay::{
     TrackedDeviceIndex,
     sys::{ETrackedDeviceProperty, EVRApplicationType, EVREventType},
 };
-use smallvec::smallvec;
 use wgui::i18n::Translation;
 use wlx_common::{dash_interface::InterfaceFeats, overlays::ToastTopic};
 
@@ -376,8 +375,9 @@ pub fn openvr_run(args: &Args, params: RunParams) -> Result<(), BackendError> {
                     continue;
                 };
                 let meta = o.config.backend.frame_meta().unwrap();
+                o.upload_stereo(&mut overlay_mgr, meta.stereo);
                 let tgt = RenderTarget {
-                    views: smallvec![o.ensure_staging_image(&mut app, meta.extent)?],
+                    views: o.ensure_staging_images(&mut app, meta.extent, meta.stereo)?,
                 };
                 let mut rdr = RenderResources::new(&app.gfx_extras.gfx_pool, tgt, &meta)?;
                 o.render(&mut app, &mut rdr)?;
@@ -393,7 +393,7 @@ pub fn openvr_run(args: &Args, params: RunParams) -> Result<(), BackendError> {
             if !(dashboard_hidden || o.data.always_visible) {
                 return;
             }
-            o.after_render(universe.clone(), &mut overlay_mgr, &app.gfx);
+            o.after_render(universe.clone(), &mut overlay_mgr, &app.gfx_extras.gfx_pool);
         });
 
         lines.reset();
